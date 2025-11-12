@@ -3,6 +3,10 @@
     "target": "es2017",
     "module": "esnext",
     "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,

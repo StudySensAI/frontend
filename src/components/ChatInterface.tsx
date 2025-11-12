@@ -10,7 +10,8 @@ export function ChatInterface() {
     {
       id: 1,
       role: 'assistant',
-      content: "Hi! I'm your AI study companion. I can help you understand your study materials, answer questions, and explain concepts. What would you like to learn about today?",
+      content:
+        "Hi! I'm your AI study companion. I can help you understand your study materials, answer questions, and explain concepts. What would you like to learn about today?",
       timestamp: new Date(),
     },
   ]);
@@ -57,7 +58,8 @@ export function ChatInterface() {
       const aiMessage = {
         id: messages.length + 2,
         role: 'assistant' as const,
-        content: "That's a great question! Based on your study materials, let me explain...\n\nBinary search trees (BST) are a fundamental data structure where each node has at most two children. The key property is that for any node, all values in its left subtree are smaller, and all values in its right subtree are larger.\n\nThis ordering property makes BSTs efficient for searching, with O(log n) average time complexity for balanced trees.",
+        content:
+          "That's a great question! Based on your study materials, let me explain...\n\nBinary search trees (BST) are a fundamental data structure where each node has at most two children. The key property is that for any node, all values in its left subtree are smaller, and all values in its right subtree are larger.\n\nThis ordering property makes BSTs efficient for searching, with O(log n) average time complexity for balanced trees.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
@@ -72,16 +74,25 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div
+      className="h-full flex flex-col min-h-screen 
+                 bg-gradient-to-br from-blue-200 via-white to-purple-200 
+                 backdrop-blur-2xl"
+    >
       {/* Header */}
-      <div className="p-4 md:p-6 border-b border-gray-200 bg-white shadow-sm">
+      <div
+        className="p-4 md:p-6 border-b border-white/50 
+                   bg-white/40 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.05)]"
+      >
         <div className="max-w-4xl mx-auto space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl">AI Study Chat</h1>
-              <p className="text-sm text-gray-600">Ask questions about your study materials</p>
+              <h1 className="text-2xl font-semibold text-gray-800">AI Study Chat</h1>
+              <p className="text-sm text-gray-600">
+                Ask questions about your study materials
+              </p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg">
               <Bot className="w-7 h-7 text-white" />
             </div>
           </div>
@@ -94,12 +105,15 @@ export function ChatInterface() {
                 <Badge
                   key={doc}
                   variant={selectedDocument === doc ? 'default' : 'outline'}
-                  className={`cursor-pointer whitespace-nowrap transition-all ${
-                    selectedDocument === doc 
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' 
-                      : 'hover:bg-gray-100'
-                  }`}
-                  onClick={() => setSelectedDocument(selectedDocument === doc ? null : doc)}
+                  className={`cursor-pointer whitespace-nowrap backdrop-blur-md transition-all 
+                    ${
+                      selectedDocument === doc
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
+                        : 'bg-white/40 border-white/60 hover:bg-white/60 text-gray-700'
+                    }`}
+                  onClick={() =>
+                    setSelectedDocument(selectedDocument === doc ? null : doc)
+                  }
                 >
                   {doc}
                 </Badge>
@@ -115,28 +129,54 @@ export function ChatInterface() {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex gap-3 ${
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
             >
               {message.role === 'assistant' && (
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shrink-0 shadow-md">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
               )}
-              
-              <div className={`flex-1 max-w-2xl ${message.role === 'user' ? 'flex justify-end' : ''}`}>
-                <Card className={`p-4 ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-white'}`}>
+
+              <div
+                className={`flex-1 max-w-2xl ${
+                  message.role === 'user' ? 'flex justify-end' : ''
+                }`}
+              >
+                <Card
+                  className={`p-4 rounded-2xl backdrop-blur-xl transition-all shadow-[0_4px_20px_rgba(0,0,0,0.05)] ${
+                    message.role === 'user'
+                      ? 'bg-gradient-to-br from-blue-500/90 to-indigo-500/90 text-white shadow-[0_6px_25px_rgba(59,130,246,0.3)]'
+                      : 'bg-white/50 border border-white/60 text-gray-800'
+                  }`}
+                >
                   <div className="space-y-2">
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                      {message.content}
+                    </p>
                     {message.role === 'assistant' && (
-                      <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
-                        <Button size="sm" variant="ghost" className="h-8 gap-2">
+                      <div className="flex items-center gap-2 pt-2 border-t border-white/60">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 gap-2 text-gray-600 hover:text-blue-600 hover:bg-white/40"
+                        >
                           <Copy className="w-3 h-3" />
                           <span className="text-xs">Copy</span>
                         </Button>
-                        <Button size="sm" variant="ghost" className="h-8">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 text-gray-600 hover:text-green-600 hover:bg-white/40"
+                        >
                           <ThumbsUp className="w-3 h-3" />
                         </Button>
-                        <Button size="sm" variant="ghost" className="h-8">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 text-gray-600 hover:text-red-600 hover:bg-white/40"
+                        >
                           <ThumbsDown className="w-3 h-3" />
                         </Button>
                       </div>
@@ -146,8 +186,8 @@ export function ChatInterface() {
               </div>
 
               {message.role === 'user' && (
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center shrink-0">
-                  <User className="w-5 h-5 text-gray-600" />
+                <div className="w-8 h-8 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                  <User className="w-5 h-5 text-gray-700" />
                 </div>
               )}
             </div>
@@ -157,13 +197,16 @@ export function ChatInterface() {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 md:p-6 border-t border-gray-200 bg-white">
+      <div
+        className="p-4 md:p-6 border-t border-white/50 bg-white/40 backdrop-blur-xl 
+                   shadow-[0_-4px_30px_rgba(0,0,0,0.05)]"
+      >
         <div className="max-w-4xl mx-auto space-y-3">
           {/* Suggested Questions */}
           {messages.length === 1 && (
             <div className="space-y-2">
               <p className="text-xs text-gray-600 flex items-center gap-2">
-                <Sparkles className="w-3 h-3" />
+                <Sparkles className="w-3 h-3 text-indigo-500" />
                 Suggested questions:
               </p>
               <div className="flex flex-wrap gap-2">
@@ -171,7 +214,7 @@ export function ChatInterface() {
                   <Badge
                     key={question}
                     variant="outline"
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="cursor-pointer bg-white/50 border-white/60 hover:bg-white/70 backdrop-blur-md text-gray-700"
                     onClick={() => setInput(question)}
                   >
                     {question}
@@ -188,12 +231,12 @@ export function ChatInterface() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              className="min-h-[60px] max-h-32 resize-none"
+              className="min-h-[60px] max-h-32 resize-none bg-white/60 border-white/60 backdrop-blur-md text-gray-800 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-400/40"
             />
             <Button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shrink-0"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all shrink-0"
             >
               <Send className="w-5 h-5" />
             </Button>

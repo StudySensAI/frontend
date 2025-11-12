@@ -8,6 +8,7 @@ import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import { AuthScreen } from './components/AuthScreen';
 import { Home, BookOpen, MessageSquare, Brain, BarChart3 } from 'lucide-react';
+import LiquidEther from './components/LiquidEther';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
