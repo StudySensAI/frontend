@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { DocumentLibrary } from './components/DocumentLibrary';
 import { ChatInterface } from './components/ChatInterface';
@@ -8,35 +8,80 @@ import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import { AuthScreen } from './components/AuthScreen';
 import { Home, BookOpen, MessageSquare, Brain, BarChart3 } from 'lucide-react';
+import { AuthContextProvider, UserAuth } from './context/authContext';
+import { supabase } from './supabaseClient';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>('dashboard');
+ return (
+    <AuthContextProvider>
+      <AppContent />
+    </AuthContextProvider>
+  );
+}
 
-  if (!isAuthenticated) {
-    return <AuthScreen onAuthSuccess={() => setIsAuthenticated(true)} />;
+function AppContent() {
+  const { session, signOut } = UserAuth(); // ✅ Supabase session from context
+  const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>('dashboard');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 🧠 Track Supabase auth session
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    };
+    getSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoading(false);
+    });
+
+    return () => {
+      listener?.subscription?.unsubscribe?.();
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen text-gray-500">
+        Loading...
+      </div>
+    );
   }
 
-  const navigation = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'library', label: 'Library', icon: BookOpen },
-    { id: 'chat', label: 'AI Chat', icon: MessageSquare },
-    { id: 'quiz', label: 'Quiz', icon: Brain },
-    { id: 'progress', label: 'Progress', icon: BarChart3 },
-  ];
+  // 🟢 If user is not logged in → show AuthScreen
+  if (!session) {
+    return <AuthScreen onAuthSuccess={() => window.location.reload()} />;
+  }
+
+  // 🟢 If user is logged in → show dashboard
+  const navigation: {
+  id: 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
+  label: string;
+  icon: any;
+}[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: Home },
+  { id: 'library', label: 'Library', icon: BookOpen },
+  { id: 'chat', label: 'AI Chat', icon: MessageSquare },
+  { id: 'quiz', label: 'Quiz', icon: Brain },
+  { id: 'progress', label: 'Progress', icon: BarChart3 },
+];
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Desktop Sidebar */}
-      <Sidebar 
-        navigation={navigation} 
-        activeView={activeView} 
+      {/* Sidebar */}
+      <Sidebar
+        navigation={navigation}
+        activeView={activeView}
         onNavigate={setActiveView}
       />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
           {activeView === 'dashboard' && <Dashboard onNavigate={setActiveView} />}
           {activeView === 'library' && <DocumentLibrary />}
@@ -46,9 +91,9 @@ export default function App() {
         </main>
 
         {/* Mobile Bottom Navigation */}
-        <MobileNav 
-          navigation={navigation} 
-          activeView={activeView} 
+        <MobileNav
+          navigation={navigation}
+          activeView={activeView}
           onNavigate={setActiveView}
         />
       </div>

@@ -2,9 +2,9 @@ import { Upload, MessageSquare, Brain, TrendingUp, BookOpen, Clock, Target, Zap 
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-
+type ViewType = 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
 interface DashboardProps {
-  onNavigate: (view: string) => void;
+  onNavigate: (view: ViewType) => void;
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {

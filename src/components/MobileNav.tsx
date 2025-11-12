@@ -1,11 +1,12 @@
+type ViewType = 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
 interface MobileNavProps {
   navigation: Array<{
-    id: string;
+    id: ViewType;
     label: string;
     icon: React.ComponentType<{ className?: string }>;
   }>;
-  activeView: string;
-  onNavigate: (view: string) => void;
+  activeView: ViewType;
+  onNavigate: (view: ViewType) => void;
 }
 
 export function MobileNav({ navigation, activeView, onNavigate }: MobileNavProps) {

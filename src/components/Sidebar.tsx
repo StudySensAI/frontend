@@ -2,14 +2,17 @@ import { GraduationCap, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface SidebarProps {
-  navigation: Array<{
-    id: string;
+  navigation: {
+    id: 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
     label: string;
-    icon: React.ComponentType<{ className?: string }>;
-  }>;
-  activeView: string;
-  onNavigate: (view: string) => void;
+    icon: React.ElementType;
+  }[];
+  activeView: 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
+  onNavigate: React.Dispatch<
+    React.SetStateAction<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>
+  >; // ✅ <-- match useState type exactly
 }
+
 
 export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
   return (

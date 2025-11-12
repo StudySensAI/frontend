@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState , FormEvent} from 'react';
 import { Brain, BookOpen, Zap, Target } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card } from './ui/card';
+import {UserAuth} from "../context/authContext"
+import { useNavigate } from "react-router-dom";
+
 
 interface AuthScreenProps {
   onAuthSuccess: () => void;
@@ -14,13 +17,41 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+const { signInUser } = UserAuth();
+  const { signUpNewUser } = UserAuth();
+  
+   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // For prototype: automatically authenticate
-    onAuthSuccess();
-  };
+    setIsLoading(true);
+    setMessage(isSignUp ? "Creating your account..." : "Signing you in...");
 
+    try {
+      if (isSignUp) {
+        
+        const { success, error } = await signUpNewUser(email, password, name);
+
+        if (!success) throw new Error(error.message);
+        setMessage(" Account created successfully! Please check your email for verification.");
+      } else {
+        const { success, error } = await signInUser(email, password);
+
+        if (!success) throw new Error(error);
+        setMessage(" Logged in successfully!");
+        onAuthSuccess(); // redirect or trigger dashboard view
+        navigate("dashboard");
+      }
+    } catch (err: any) {
+      console.error("Auth error:", err);
+      setMessage(` ${err.message || "Something went wrong."}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="container mx-auto px-4 py-8">
