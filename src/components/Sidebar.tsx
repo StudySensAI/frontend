@@ -1,5 +1,6 @@
 import { GraduationCap, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
+import { UserAuth } from '../context/authContext';
 
 interface SidebarProps {
   navigation: {
@@ -15,6 +16,16 @@ interface SidebarProps {
 
 
 export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
+  const { signOut,setSession } = UserAuth();
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      onNavigate('dashboard'); // optional: reset view
+      setSession(null); // ✅ ensures session reset visually
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
+  };
   return (
     <div className="hidden md:flex md:w-64 md:flex-col bg-white border-r border-gray-200">
       <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
@@ -59,7 +70,7 @@ export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
               <p className="text-xs text-gray-500">Premium Plan</p>
             </div>
           </div>
-          <Button variant="ghost" className="w-full mt-2 gap-2 text-gray-600 hover:text-red-600">
+          <Button variant="ghost" onClick={handleSignOut} className="w-full mt-2 gap-2 text-gray-600 hover:text-red-600">
             <LogOut className="w-4 h-4" />
             Sign Out
           </Button>

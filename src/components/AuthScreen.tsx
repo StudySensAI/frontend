@@ -42,7 +42,7 @@ const { signInUser } = UserAuth();
         if (!success) throw new Error(error);
         setMessage(" Logged in successfully!");
         onAuthSuccess(); // redirect or trigger dashboard view
-        navigate("dashboard");
+        // navigate("dashboard");
       }
     } catch (err: any) {
       console.error("Auth error:", err);

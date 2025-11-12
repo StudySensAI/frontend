@@ -10,6 +10,7 @@ import { AuthScreen } from './components/AuthScreen';
 import { Home, BookOpen, MessageSquare, Brain, BarChart3 } from 'lucide-react';
 import { AuthContextProvider, UserAuth } from './context/authContext';
 import { supabase } from './supabaseClient';
+import { set } from 'react-hook-form';
 
 export default function App() {
  return (
@@ -20,30 +21,28 @@ export default function App() {
 }
 
 function AppContent() {
-  const { session, signOut } = UserAuth(); // ✅ Supabase session from context
+  const { session,loading, setSession } = UserAuth(); // ✅ Supabase session from context
   const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>('dashboard');
   const [isLoading, setIsLoading] = useState(true);
 
   // 🧠 Track Supabase auth session
   useEffect(() => {
-    const getSession = async () => {
+    const initSession = async () => {
       const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-      }
+      setSession(data.session || null);
+      setIsLoading(false);
     };
-    getSession();
+    initSession();
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
       setIsLoading(false);
     });
 
     return () => {
       listener?.subscription?.unsubscribe?.();
     };
-  }, []);
+  }, [setSession]);
 
   if (isLoading) {
     return (
