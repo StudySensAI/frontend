@@ -1,37 +1,87 @@
+import { useState, useEffect } from 'react';
 import { Upload, MessageSquare, Brain, TrendingUp, BookOpen, Clock, Target, Zap } from 'lucide-react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
+import { supabase } from '../supabaseClient';
+
 type ViewType = 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
 interface DashboardProps {
   onNavigate: (view: ViewType) => void;
 }
+ 
 
 export function Dashboard({ onNavigate }: DashboardProps) {
-  const recentDocuments = [
-    { id: 1, name: 'Data Structures - Chapter 5.pdf', pages: 24, uploadedAt: '2 hours ago' },
-    { id: 2, name: 'Algorithm Analysis Notes.pdf', pages: 18, uploadedAt: '1 day ago' },
-    { id: 3, name: 'Computer Networks Summary.pdf', pages: 32, uploadedAt: '3 days ago' },
-  ];
+const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
+  const [loadingDocs, setLoadingDocs] = useState(true);
 
-  const recentQuizzes = [
-    { id: 1, topic: 'Binary Trees', score: 85, total: 100, date: 'Today' },
-    { id: 2, topic: 'Sorting Algorithms', score: 92, total: 100, date: 'Yesterday' },
-    { id: 3, topic: 'Graph Theory', score: 78, total: 100, date: '2 days ago' },
-  ];
 
-  const studyStats = [
-    { label: 'Documents', value: '12', icon: BookOpen, color: 'bg-blue-100 text-blue-600' },
+   const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const diff = Date.now() - date.getTime();
+    const hours = diff / (1000 * 60 * 60);
+
+    if (hours < 1) return "just now";
+    if (hours < 24) return `${Math.floor(hours)} hours ago`;
+    return `${Math.floor(hours / 24)} days ago`;
+  };
+
+  useEffect(() => {
+    async function loadDocuments() {
+      setLoadingDocs(true);
+
+      const { data: user } = await supabase.auth.getUser();
+      const userId = user?.user?.id;
+
+      if (!userId) {
+        setRecentDocuments([]);
+        setLoadingDocs(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `http://localhost:8000/api/v1/dashboard/documents?user_id=${userId}`
+        );
+        const result = await res.json();
+        setRecentDocuments(result.documents || []);
+        
+        
+      } catch (err) {
+        console.error("Failed to load documents:", err);
+      }
+
+      setLoadingDocs(false);
+    }
+
+    loadDocuments();
+  }, []);
+
+  //  const recentDocuments = [
+  //    { id: 1, name: 'Data Structures - Chapter 5.pdf', pages: 24, uploadedAt: '2 hours ago' },
+  //    { id: 2, name: 'Algorithm Analysis Notes.pdf', pages: 18, uploadedAt: '1 day ago' },
+  //    { id: 3, name: 'Computer Networks Summary.pdf', pages: 32, uploadedAt: '3 days ago' },
+  //  ];
+
+    const recentQuizzes = [
+      { id: 1, topic: 'Binary Trees', score: 85, total: 100, date: 'Today' },
+      { id: 2, topic: 'Sorting Algorithms', score: 92, total: 100, date: 'Yesterday' },
+      { id: 3, topic: 'Graph Theory', score: 78, total: 100, date: '2 days ago' },
+    ];
+
+    const studyStats = [
+      { label: 'Documents', value: "12", icon: BookOpen, color: 'bg-blue-100 text-blue-600' },
     { label: 'Study Hours', value: '24', icon: Clock, color: 'bg-indigo-100 text-indigo-600' },
-    { label: 'Quizzes Taken', value: '18', icon: Brain, color: 'bg-purple-100 text-purple-600' },
-    { label: 'Avg Score', value: '85%', icon: Target, color: 'bg-pink-100 text-pink-600' },
-  ];
+      { label: 'Quizzes Taken', value: '18', icon: Brain, color: 'bg-purple-100 text-purple-600' },
+      { label: 'Avg Score', value: '85%', icon: Target, color: 'bg-pink-100 text-pink-600' },
+    ];
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-3xl">Welcome back! 👋</h1>
+        
         <p className="text-gray-600">Ready to continue your learning journey?</p>
       </div>
 
@@ -92,19 +142,24 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               View all
             </Button>
           </div>
+          {loadingDocs ? (
+            <p className="text-sm text-gray-500">Loading materials...</p>
+          ) : recentDocuments.length === 0 ? (
+            <p className="text-sm text-gray-500">No materials uploaded yet.</p>
+          ) : (
           <div className="space-y-3">
             {recentDocuments.map((doc) => (
-              <div key={doc.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
+              <div key={doc.id} onClick={() => {window.open(doc.file_url, "_blank")}} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
                 <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-red-200 transition-colors">
                   <BookOpen className="w-5 h-5 text-red-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm truncate">{doc.name}</p>
-                  <p className="text-xs text-gray-600">{doc.pages} pages · {doc.uploadedAt}</p>
+                  <p className="text-sm truncate">{doc.title}</p>
+                  <p className="text-xs text-gray-600"> {doc.pages || 0} pages · {formatTimeAgo(doc.uploaded_at)}</p>
                 </div>
               </div>
             ))}
-          </div>
+          </div>)}
         </Card>
 
         {/* Recent Quizzes */}

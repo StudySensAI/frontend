@@ -34,6 +34,8 @@ export const documentService = {
       .order("uploaded_at", { ascending: false });
 
     if (error) throw new Error(error.message);
+    console.log(data.length);
+    
 
     return data as DocumentRecord[];
   },
