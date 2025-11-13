@@ -15,6 +15,7 @@ export interface DocumentRecord {
 const API_BASE = "http://localhost:8000/api/v1/uploads";
 
 export const documentService = {
+    
   // ------------------------------------
   // 🧠 Fetch All Documents for User
   // ------------------------------------
@@ -34,7 +35,8 @@ export const documentService = {
       .order("uploaded_at", { ascending: false });
 
     if (error) throw new Error(error.message);
-    console.log(data.length);
+    
+    
     
 
     return data as DocumentRecord[];

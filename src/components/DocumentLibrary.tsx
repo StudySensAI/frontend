@@ -8,6 +8,7 @@ import {
   documentService,
   DocumentRecord,
 } from "./services/documentService";
+import { set } from 'react-hook-form';
 
 export function DocumentLibrary() {
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -25,6 +26,8 @@ export function DocumentLibrary() {
       setLoading(true);
       const docs = await documentService.getDocuments();
       setDocuments(docs);
+      
+      
     } catch (err) {
       console.error("Error fetching documents:", err);
     } finally {

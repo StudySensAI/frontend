@@ -11,7 +11,6 @@ import { Home, BookOpen, MessageSquare, Brain, BarChart3 } from 'lucide-react';
 import { AuthContextProvider, UserAuth } from './context/authContext';
 import { supabase } from './supabaseClient';
 import { set } from 'react-hook-form';
-
 export default function App() {
  return (
     <AuthContextProvider>

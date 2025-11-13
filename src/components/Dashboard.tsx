@@ -69,7 +69,7 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
       { id: 3, topic: 'Graph Theory', score: 78, total: 100, date: '2 days ago' },
     ];
 
-    const studyStats = [
+    const studyStats = [ 
       { label: 'Documents', value: "12", icon: BookOpen, color: 'bg-blue-100 text-blue-600' },
     { label: 'Study Hours', value: '24', icon: Clock, color: 'bg-indigo-100 text-indigo-600' },
       { label: 'Quizzes Taken', value: '18', icon: Brain, color: 'bg-purple-100 text-purple-600' },
