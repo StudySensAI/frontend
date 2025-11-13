@@ -9,8 +9,17 @@ import { MobileNav } from './components/MobileNav';
 import { AuthScreen } from './components/AuthScreen';
 import { Home, BookOpen, MessageSquare, Brain, BarChart3 } from 'lucide-react';
 import LiquidEther from './components/LiquidEther';
+import { ThemeProvider } from './context/themeContext';
 
 export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>('dashboard');
 
@@ -27,7 +36,7 @@ export default function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
       {/* Desktop Sidebar */}
       <Sidebar 
         navigation={navigation} 

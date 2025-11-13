@@ -30,12 +30,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   return (
     <div
       className="min-h-screen p-6 md:p-10 bg-gradient-to-br from-blue-200 via-white to-purple-200
+                 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950
                  bg-fixed">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
-        <div className="p-6 rounded-3xl bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_4px_40px_rgba(0,0,0,0.05)]">
-          <h1 className="text-3xl font-semibold text-gray-800">Welcome back! 👋</h1>
-          <p className="text-gray-600">Ready to continue your learning journey?</p>
+        <div className="p-6 rounded-3xl bg-white/40 dark:bg-gray-800/30 backdrop-blur-2xl border border-white/60 dark:border-gray-700/30 shadow-[0_4px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_40px_rgba(0,0,0,0.3)]">
+          <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">Welcome back! 👋</h1>
+          <p className="text-gray-600 dark:text-gray-400">Ready to continue your learning journey?</p>
         </div>
 
         {/* Stats Grid */}
@@ -45,14 +46,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             return (
               <Card
                 key={stat.label}
-                className="p-5 rounded-3xl border border-white/60 bg-white/30 
-                           backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.06)]
-                           hover:bg-white/40 transition-all"
+                className="p-5 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/30 dark:bg-gray-800/20
+                           backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]
+                           hover:bg-white/40 dark:hover:bg-gray-800/30 transition-all"
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <p className="text-sm text-gray-600">{stat.label}</p>
-                    <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stat.value}</p>
                   </div>
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.color}`}>
                     <Icon className="w-5 h-5" />
@@ -64,8 +65,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </div>
 
         {/* Quick Actions */}
-        <Card className="p-6 rounded-3xl border border-white/60 bg-white/35 backdrop-blur-2xl shadow-xl">
-          <h2 className="text-lg mb-4 text-gray-800 font-medium">Quick Actions</h2>
+        <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/35 dark:bg-gray-800/20 backdrop-blur-2xl shadow-xl dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
+          <h2 className="text-lg mb-4 text-gray-800 dark:text-white font-medium">Quick Actions</h2>
           <div className="grid sm:grid-cols-3 gap-3">
             <Button
               onClick={() => onNavigate('library')}
@@ -99,10 +100,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Recent Documents */}
-          <Card className="p-6 rounded-3xl border border-white/60 bg-white/30 backdrop-blur-2xl shadow-lg">
+          <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/30 dark:bg-gray-800/20 backdrop-blur-2xl shadow-lg dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-800">Recent Materials</h2>
-              <Button variant="ghost" size="sm" className="text-gray-700 hover:bg-white/50" onClick={() => onNavigate('library')}>
+              <h2 className="text-lg font-medium text-gray-800 dark:text-white">Recent Materials</h2>
+              <Button variant="ghost" size="sm" className="text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" onClick={() => onNavigate('library')}>
                 View all
               </Button>
             </div>
@@ -110,15 +111,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               {recentDocuments.map((doc) => (
                 <div
                   key={doc.id}
-                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/50 
+                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50
                              transition-all cursor-pointer group"
                 >
-                  <div className="w-10 h-10 bg-blue-200/50 rounded-lg flex items-center justify-center group-hover:bg-blue-300/50 transition-colors">
-                    <BookOpen className="w-5 h-5 text-blue-700" />
+                  <div className="w-10 h-10 bg-blue-200/50 dark:bg-blue-900/40 rounded-lg flex items-center justify-center group-hover:bg-blue-300/50 dark:group-hover:bg-blue-900/60 transition-colors">
+                    <BookOpen className="w-5 h-5 text-blue-700 dark:text-blue-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm truncate text-gray-800">{doc.name}</p>
-                    <p className="text-xs text-gray-600">{doc.pages} pages · {doc.uploadedAt}</p>
+                    <p className="text-sm truncate text-gray-800 dark:text-gray-200">{doc.name}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{doc.pages} pages · {doc.uploadedAt}</p>
                   </div>
                 </div>
               ))}
@@ -126,10 +127,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </Card>
 
           {/* Recent Quizzes */}
-          <Card className="p-6 rounded-3xl border border-white/60 bg-white/30 backdrop-blur-2xl shadow-lg">
+          <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/30 dark:bg-gray-800/20 backdrop-blur-2xl shadow-lg dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-800">Recent Quizzes</h2>
-              <Button variant="ghost" size="sm" className="text-gray-700 hover:bg-white/50" onClick={() => onNavigate('quiz')}>
+              <h2 className="text-lg font-medium text-gray-800 dark:text-white">Recent Quizzes</h2>
+              <Button variant="ghost" size="sm" className="text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" onClick={() => onNavigate('quiz')}>
                 View all
               </Button>
             </div>
@@ -138,20 +139,20 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 <div key={quiz.id} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-800">{quiz.topic}</p>
-                      <p className="text-xs text-gray-600">{quiz.date}</p>
+                      <p className="text-sm text-gray-800 dark:text-gray-200">{quiz.topic}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{quiz.date}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-800">{quiz.score}/{quiz.total}</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-sm text-gray-800 dark:text-gray-200">{quiz.score}/{quiz.total}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
                         {Math.round((quiz.score / quiz.total) * 100)}%
                       </p>
                     </div>
                   </div>
                   <Progress
   value={(quiz.score / quiz.total) * 100}
-  className="h-2 bg-white/40 backdrop-blur-sm overflow-hidden
-             [&>div]:bg-gradient-to-r [&>div]:from-blue-500 [&>div]:to-indigo-500
+  className="h-2 bg-white/40 dark:bg-gray-700/40 backdrop-blur-sm overflow-hidden
+             [&>div]:bg-linear-to-r [&>div]:from-blue-500 [&>div]:to-indigo-500
              [&>div]:shadow-[0_0_10px_rgba(79,70,229,0.4)]"
 />
 
@@ -162,19 +163,19 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </div>
 
         {/* Learning Streak */}
-        <Card className="p-6 rounded-3xl bg-gradient-to-br from-blue-400/90 to-indigo-400/90 
-                         text-white shadow-2xl backdrop-blur-2xl border border-white/50">
+        <Card className="p-6 rounded-3xl bg-linear-to-br from-blue-400/90 to-indigo-400/90 dark:from-blue-900/60 dark:to-indigo-900/60
+                         text-white shadow-2xl backdrop-blur-2xl border border-white/50 dark:border-indigo-700/30">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/30 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-white/30 dark:bg-white/10 rounded-2xl flex items-center justify-center">
               <Zap className="w-8 h-8 text-white" />
             </div>
             <div className="flex-1">
               <h2 className="text-xl mb-1 font-semibold">7 Day Streak! 🔥</h2>
-              <p className="text-indigo-100 text-sm">You're on fire! Keep up the great work.</p>
+              <p className="text-indigo-100 dark:text-indigo-200 text-sm">You're on fire! Keep up the great work.</p>
             </div>
             <Button
               variant="secondary"
-              className="bg-white/40 text-white hover:bg-white/60 border border-white/30"
+              className="bg-white/40 dark:bg-white/10 text-white hover:bg-white/60 dark:hover:bg-white/20 border border-white/30 dark:border-white/10"
             >
               Details
             </Button>

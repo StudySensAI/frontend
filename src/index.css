@@ -2669,3 +2669,25 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes wave {
+  0% {
+    width: 0px;
+    height: 0px;
+    opacity: 0.6;
+  }
+  70% {
+    opacity: 0.18;
+  }
+  100% {
+    width: 3000px;
+    height: 3000px;
+    opacity: 0;
+  }
+}
+
+.animate-wave {
+  animation: wave 1s ease-out forwards;
+  position: absolute;
+  border-radius: 50%;
+}
