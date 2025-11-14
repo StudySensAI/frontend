@@ -33,7 +33,7 @@ useEffect(() => {
     const userId = userData?.user?.id;
 
     const res = await fetch(
-      `http://localhost:3001/api/v1/dashboard/documents?user_id=${userId}`
+      `${API_URL}/api/v1/dashboard/documents?user_id=${userId}`
     );
     const data = await res.json();
 
@@ -49,7 +49,7 @@ const handleClickPage = async (pageId: string): Promise<void> => {
   }
   setSelectedNotionPage(pageId)
   try {
-    const res = await fetch("http://localhost:3001/notion/store", {
+    const res = await fetch(`${API_URL}/notion/store`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -74,7 +74,7 @@ async function loadNotionPages() {
   if (!id) return;
 
   try {
-    const res = await fetch(`http://localhost:3001/notion/pages?userId=${id}`);
+    const res = await fetch(`${API_URL}/notion/pages?userId=${id}`);
     const data = await res.json();
 
     if (Array.isArray(data.pages)) {
@@ -114,7 +114,7 @@ useEffect(() => {
   const handleConnectToNotion = async () => {
     if (!id) return alert("User not logged in");
   
-    const resp = await fetch("http://localhost:3001/oauth/start", {
+    const resp = await fetch(`${API_URL}/oauth/start`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: id }),
@@ -178,6 +178,7 @@ useEffect(() => {
       return updated;
     });
   };
+  const API_URL = import.meta.env.VITE_API_URL;
 
 
   // ---------------- SEND MESSAGE ----------------
@@ -201,7 +202,7 @@ useEffect(() => {
     setInput("");
 
     try {
-      const res = await fetch("http://localhost:3001/chat/query", {
+      const res = await fetch(`${API_URL}/chat/query`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -32,6 +32,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     if (hours < 24) return `${Math.floor(hours)} hours ago`;
     return `${Math.floor(hours / 24)} days ago`;
   };
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     async function loadDocuments() {
@@ -48,7 +49,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       try {
         const res = await fetch(
-          `http://localhost:3001/api/v1/dashboard/documents?user_id=${userId}`
+          `${API_URL}/api/v1/dashboard/documents?user_id=${userId}`
         );
         const result = await res.json();
         setRecentDocuments(result.documents || []);
