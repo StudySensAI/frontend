@@ -1,7 +1,7 @@
 import { GraduationCap, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 import { UserAuth } from '../context/authContext';
-
+import { useUser } from '../context/userContext';
 interface SidebarProps {
   navigation: {
     id: 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
@@ -17,6 +17,7 @@ interface SidebarProps {
 
 export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
   const { signOut,setSession } = UserAuth();
+  const { user } = useUser();
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -66,7 +67,7 @@ export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
               <span className="text-white">JS</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm truncate">John Student</p>
+              <p className="text-sm truncate">{user?.full_name}</p>
               <p className="text-xs text-gray-500">Premium Plan</p>
             </div>
           </div>

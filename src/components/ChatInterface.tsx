@@ -1,23 +1,127 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, BookOpen, Sparkles, Copy, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Send, Bot, User, BookOpen, Sparkles, Copy, ThumbsUp, ThumbsDown, Plus } from 'lucide-react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-
+import { useUser } from '../context/userContext';
+import NotionSuccess from '../notion/success';
 export function ChatInterface() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      role: 'assistant',
-      content: "Hi! I'm your AI study companion. I can help you understand your study materials, answer questions, and explain concepts. What would you like to learn about today?",
-      timestamp: new Date(),
-    },
-  ]);
-  const [input, setInput] = useState('');
-  const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
+  const id = localStorage.getItem("userId")
+  interface NotionPage {
+    page_id: string;
+    page_name: string;
+  }
+  
+  const [notionPages, setNotionPages] = useState<NotionPage[]>([]);
+const [selectedNotionPage, setSelectedNotionPage] = useState<string | null>(null);
+const [notionConnected, setNotionConnected] = useState(false);
+const handleClickPage = async (pageId: string): Promise<void> => {
+  if (!id) {
+    console.error("No user ID found.");
+    return;
+  }
+  setSelectedNotionPage(pageId)
 
+  try {
+    const res = await fetch("http://localhost:3001/notion/store", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: id,
+        pageId,
+      }),
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      console.error("Failed to store page:", error);
+    }
+  } catch (err) {
+    console.error("Network error while storing page:", err);
+  }
+};
+
+async function loadNotionPages() {
+  if (!id) return;
+
+  try {
+    const res = await fetch(`http://localhost:3001/notion/pages?userId=${id}`);
+    const data = await res.json();
+
+    if (Array.isArray(data.pages)) {
+      setNotionPages(data.pages as NotionPage[]);
+    }
+    console.log("datapages", data.pages)
+    console.log('setnotionpages', notionPages)
+  } catch (err) {
+    console.error("Failed to load Notion pages:", err);
+  }
+}
+
+
+
+
+useEffect(() => {
+  async function init() {
+    const isConnected = localStorage.getItem("notionConnected") === "true";
+    console.log("isConnected:", isConnected);
+
+    if (isConnected && id) {
+      setNotionConnected(true);
+      await loadNotionPages();   // ✅ NOW it properly awaits
+    }
+  }
+
+  init();
+}, [id]);
+
+  // runs again once userId is available
+  console.log('notion sucess',NotionSuccess)
+  console.log('notion connected',notionConnected)
+  console.log("notion pages",notionPages)
+  
+  
+
+  const handleConnectToNotion = async () => {
+    if (!id) return alert("User not logged in");
+  
+    const resp = await fetch("http://localhost:3001/oauth/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: id }),
+    });
+  
+    const { auth_url } = await resp.json();
+    window.open(auth_url, "_blank", "noopener,noreferrer");
+  };
+  
+
+
+  const [messages, setMessages] = useState<
+  { id: number; role: "user" | "assistant"; content: string; timestamp: Date }[]
+>([
+  {
+    id: 1,
+    role: "assistant",
+    content:
+      "Hi! I'm your AI study companion. Ask me anything about your Notion pages.",
+    timestamp: new Date(),
+  },
+]);
+
+const [input, setInput] = useState("");
+const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
+const messagesEndRef = useRef<HTMLDivElement>(null);
+
+const scrollToBottom = () => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+};
+
+useEffect(() => {
+  scrollToBottom();
+}, [messages]);
   const documents = [
     'Data Structures - Chapter 5.pdf',
     'Algorithm Analysis Notes.pdf',
@@ -31,41 +135,57 @@ export function ChatInterface() {
     'Summarize this chapter',
   ];
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
+    if (!selectedNotionPage)
+      return alert("Please select a Notion page first.");
+    console.log('selected page', selectedNotionPage)
 
     const userMessage = {
       id: messages.length + 1,
-      role: 'user' as const,
+      role: "user" as const,
       content: input,
       timestamp: new Date(),
     };
 
-    setMessages([...messages, userMessage]);
-    setInput('');
+    setMessages((prev) => [...prev, userMessage]);
 
-    // Simulate AI response
-    setTimeout(() => {
+    const question = input;
+    setInput("");
+
+    try {
+      const res = await fetch("http://localhost:3001/chat/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: id,
+          pageId: selectedNotionPage,
+          question,
+        }),
+      });
+
+      const data = await res.json();
+
       const aiMessage = {
         id: messages.length + 2,
-        role: 'assistant' as const,
-        content: "That's a great question! Based on your study materials, let me explain...\n\nBinary search trees (BST) are a fundamental data structure where each node has at most two children. The key property is that for any node, all values in its left subtree are smaller, and all values in its right subtree are larger.\n\nThis ordering property makes BSTs efficient for searching, with O(log n) average time complexity for balanced trees.",
+        role: "assistant" as const,
+        content: data.answer || "No response.",
         timestamp: new Date(),
       };
+
       setMessages((prev) => [...prev, aiMessage]);
-    }, 1000);
+    } catch (err) {
+      console.error("Chat request failed:", err);
+    }
   };
 
+  /* --------------------------------------------
+   * Handle Enter Key
+   * --------------------------------------------
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -106,6 +226,31 @@ export function ChatInterface() {
               ))}
             </div>
           </div>
+          {/* --- Notion Pages Selector --- */}
+      {notionConnected && notionPages.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+          <span className="text-sm text-gray-500 mr-2">Notion Pages:</span>
+      
+          <div className="flex gap-2">
+            {notionPages.map((page) => (
+              <Badge
+                key={page.page_id}
+                variant={selectedNotionPage === page.page_id ? "default" : "outline"}
+                onClick={() => handleClickPage(page.page_id)}
+
+                className={`cursor-pointer whitespace-nowrap transition-all ${
+                  selectedNotionPage === page.page_id
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                {page.page_name}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
         </div>
       </div>
 
@@ -177,6 +322,10 @@ export function ChatInterface() {
                     {question}
                   </Badge>
                 ))}
+                <Button size="sm" onClick={handleConnectToNotion} variant="ghost" className="h-8">
+                    <Plus className="w-3 h-3" />
+                  <span className="text-xs">Connect to Notion </span>
+                </Button>
               </div>
             </div>
           )}

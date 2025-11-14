@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "./userContext";
+import { mapSupabaseUser } from "../scripts/mapuser";
 
 interface AuthContextType {
   session: any;
@@ -24,7 +26,8 @@ export const AuthContextProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const expiryTimeoutRef = useRef<number | null>(null);
   const navigate = useNavigate();
-
+  
+  const { setUser } = useUser(); 
   // ⏰ session expiry time (1 hour = 3600000 ms)
   const SESSION_EXPIRY_MS = 60 * 60 * 1000;
 
@@ -83,7 +86,7 @@ export const AuthContextProvider = ({ children }: AuthProviderProps) => {
 
     init();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event: any, newSession: any) => {
       setSession(newSession);
       if (!newSession) {
         localStorage.removeItem("app_session_expires_at");
@@ -113,6 +116,10 @@ export const AuthContextProvider = ({ children }: AuthProviderProps) => {
       console.error("Error signing up: ", error);
       return { success: false, error };
     }
+    console.log("data signing up", data);
+    const appUser = mapSupabaseUser(data.user);
+
+    setUser(appUser);
 
     if (data?.user) {
       await supabase.from("profiles").insert([

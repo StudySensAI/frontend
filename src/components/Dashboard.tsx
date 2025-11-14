@@ -2,12 +2,20 @@ import { Upload, MessageSquare, Brain, TrendingUp, BookOpen, Clock, Target, Zap 
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
+import { useUser } from '../context/userContext';
 type ViewType = 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
+import { useEffect } from 'react';
 interface DashboardProps {
   onNavigate: (view: ViewType) => void;
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {
+  const { user } = useUser();
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem("userId", user.id); // save for persistence
+    }
+  }, [user]);
   const recentDocuments = [
     { id: 1, name: 'Data Structures - Chapter 5.pdf', pages: 24, uploadedAt: '2 hours ago' },
     { id: 2, name: 'Algorithm Analysis Notes.pdf', pages: 18, uploadedAt: '1 day ago' },
@@ -26,12 +34,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     { label: 'Quizzes Taken', value: '18', icon: Brain, color: 'bg-purple-100 text-purple-600' },
     { label: 'Avg Score', value: '85%', icon: Target, color: 'bg-pink-100 text-pink-600' },
   ];
+  console.log("user is", user);
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl">Welcome back! 👋</h1>
+        <h1 className="text-3xl">Welcome back! 👋{user?.full_name} </h1>
         <p className="text-gray-600">Ready to continue your learning journey?</p>
       </div>
 
