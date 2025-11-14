@@ -110,43 +110,9 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
         })}
       </div>
 
-      {/* Quick Actions */}
-      {/* <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/35 dark:bg-gray-800/20 backdrop-blur-2xl shadow-xl dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
-        <h2 className="text-lg mb-4 text-gray-800 dark:text-white font-medium">Quick Actions</h2>
-        <div className="grid sm:grid-cols-3 gap-3">
-          <Button
-            onClick={() => onNavigate('library')}
-            className="h-auto py-4 flex-col gap-2 bg-gradient-to-br from-blue-400/80 to-indigo-400/80 
-                         hover:from-blue-500 hover:to-indigo-500 text-white font-medium 
-                         shadow-lg hover:shadow-xl transition-all backdrop-blur-md"
-          >
-            <Upload className="w-6 h-6" />
-            <span className="text-sm">Upload Material</span>
-          </Button>
-          <Button
-            onClick={() => onNavigate('chat')}
-            className="h-auto py-4 flex-col gap-2 bg-gradient-to-br from-indigo-400/80 to-purple-400/80 
-                         hover:from-indigo-500 hover:to-purple-500 text-white font-medium 
-                         shadow-lg hover:shadow-xl transition-all backdrop-blur-md"
-          >
-            <MessageSquare className="w-6 h-6" />
-            <span className="text-sm">Ask AI</span>
-          </Button>
-          <Button
-            onClick={() => onNavigate('quiz')}
-            className="h-auto py-4 flex-col gap-2 bg-gradient-to-br from-purple-400/80 to-pink-400/80 
-                         hover:from-purple-500 hover:to-pink-500 text-white font-medium 
-                         shadow-lg hover:shadow-xl transition-all backdrop-blur-md"
-          >
-            <Brain className="w-6 h-6" />
-            <span className="text-sm">Take Quiz</span>
-          </Button>
-        </div>
-        </Card> */}
-
         {/* Stats Grid */}
         
-
+ß
         {/* Quick Actions */}
         <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/35 dark:bg-gray-800/20 backdrop-blur-2xl shadow-xl dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
           <h2 className="text-lg mb-4 text-gray-800 dark:text-white font-medium">Quick Actions</h2>
