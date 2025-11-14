@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { UserAuth } from '../context/authContext';
 import { useTheme } from '../context/themeContext';
 
+import { useUser } from '../context/userContext';
 interface SidebarProps {
   navigation: {
     id: 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
@@ -18,6 +19,7 @@ interface SidebarProps {
 
 export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
   const { signOut,setSession } = UserAuth();
+  const { user } = useUser();
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -99,8 +101,8 @@ export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
               JS
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">John Student</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Premium Plan</p>
+              <p className="text-sm truncate">{user?.full_name}</p>
+              <p className="text-xs text-gray-500">Premium Plan</p>
             </div>
           </div>
           <Button variant="ghost" onClick={handleSignOut} className="w-full mt-3 gap-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400

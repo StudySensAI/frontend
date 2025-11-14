@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { supabase } from '../supabaseClient';
 
+import { useUser } from '../context/userContext';
 type ViewType = 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
 interface DashboardProps {
   onNavigate: (view: ViewType) => void;
@@ -12,7 +13,13 @@ interface DashboardProps {
  
 
 export function Dashboard({ onNavigate }: DashboardProps) {
-const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
+  const { user } = useUser();
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem("userId", user.id); // save for persistence
+    }
+  }, [user]);
+  const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
   const [loadingDocs, setLoadingDocs] = useState(true);
 
 
@@ -72,9 +79,10 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
     const studyStats = [ 
       { label: 'Documents', value: "12", icon: BookOpen, color: 'bg-blue-100 text-blue-600' },
     { label: 'Study Hours', value: '24', icon: Clock, color: 'bg-indigo-100 text-indigo-600' },
-      { label: 'Quizzes Taken', value: '18', icon: Brain, color: 'bg-purple-100 text-purple-600' },
-      { label: 'Avg Score', value: '85%', icon: Target, color: 'bg-pink-100 text-pink-600' },
-    ];
+    { label: 'Quizzes Taken', value: '18', icon: Brain, color: 'bg-purple-100 text-purple-600' },
+    { label: 'Avg Score', value: '85%', icon: Target, color: 'bg-pink-100 text-pink-600' },
+  ];
+  console.log("user is", user);
 
   return (
     <div className="min-h-screen p-6 md:p-10 bg-gradient-to-br from-blue-200 via-white to-purple-200
@@ -144,12 +152,24 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
               <Brain className="w-6 h-6" />
               <span className="text-sm">Take Quiz</span>
             </Button></div></Card>
-          {loadingDocs ? (
-            <p className="text-sm text-gray-500">Loading materials...</p>
-          ) : recentDocuments.length === 0 ? (
-            <p className="text-sm text-gray-500">No materials uploaded yet.</p>
-          ) : (
+
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Recent Documents */}
+          <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/30 dark:bg-gray-800/20 backdrop-blur-2xl shadow-lg dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-medium text-gray-800 dark:text-white">Recent Materials</h2>
+              <Button variant="ghost" size="sm" className="text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" onClick={() => onNavigate('library')}>
+                View all
+              </Button>
+            </div>
+            <div className="space-y-3">
+            {loadingDocs ? (
+              <p className="text-sm text-gray-500">Loading materials...</p>
+            ) : recentDocuments.length === 0 ? (
+              <p className="text-sm text-gray-500">No materials uploaded yet.</p>
+            ) : (
           <div className="space-y-3">
+            aefsaef
             {recentDocuments.map((doc) => (
               <div key={doc.id} onClick={() => {window.open(doc.file_url, "_blank")}} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
                 <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-red-200 transition-colors">
@@ -162,32 +182,7 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
               </div>
             ))}
           </div>)}
-
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Recent Documents */}
-          <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/30 dark:bg-gray-800/20 backdrop-blur-2xl shadow-lg dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-800 dark:text-white">Recent Materials</h2>
-              <Button variant="ghost" size="sm" className="text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50" onClick={() => onNavigate('library')}>
-                View all
-              </Button>
-            </div>
-            <div className="space-y-3">
-              {recentDocuments.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50
-                             transition-all cursor-pointer group"
-                >
-                  <div className="w-10 h-10 bg-blue-200/50 dark:bg-blue-900/40 rounded-lg flex items-center justify-center group-hover:bg-blue-300/50 dark:group-hover:bg-blue-900/60 transition-colors">
-                    <BookOpen className="w-5 h-5 text-blue-700 dark:text-blue-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm truncate text-gray-800 dark:text-gray-200">{doc.name}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">{doc.pages} pages · {doc.uploadedAt}</p>
-                  </div>
-                </div>
-              ))}
+             
             </div>
           </Card>
 

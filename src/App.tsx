@@ -13,9 +13,13 @@ import { supabase } from './supabaseClient';
 import { set } from 'react-hook-form';
 import LiquidEther from './components/LiquidEther';
 import { ThemeProvider } from './context/themeContext';
+import { Routes, Route } from 'react-router-dom';
+import NotionSuccess from "./notion/success";
+
 export default function App() {
- return (
-  <ThemeProvider>
+  return (
+    <ThemeProvider>
+
     <AuthContextProvider>
       <AppContent />
     </AuthContextProvider>
@@ -29,7 +33,6 @@ function AppContent() {
   const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>('dashboard');
   const [isLoading, setIsLoading] = useState(true);
 
-  // 🧠 Track Supabase auth session
   useEffect(() => {
     const initSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -38,7 +41,7 @@ function AppContent() {
     };
     initSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setSession(session);
       setIsLoading(false);
     });
@@ -56,50 +59,61 @@ function AppContent() {
     );
   }
 
-  // 🟢 If user is not logged in → show AuthScreen
   if (!session) {
     return <AuthScreen onAuthSuccess={() => window.location.reload()} />;
   }
 
-  // 🟢 If user is logged in → show dashboard
   const navigation: {
-  id: 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
-  label: string;
-  icon: any;
-}[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: Home },
-  { id: 'library', label: 'Library', icon: BookOpen },
-  { id: 'chat', label: 'AI Chat', icon: MessageSquare },
-  { id: 'quiz', label: 'Quiz', icon: Brain },
-  { id: 'progress', label: 'Progress', icon: BarChart3 },
-];
+    id: "dashboard" | "library" | "chat" | "quiz" | "progress";
+    label: string;
+    icon: any;
+  }[] = [
+    { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "library", label: "Library", icon: BookOpen },
+    { id: "chat", label: "AI Chat", icon: MessageSquare },
+    { id: "quiz", label: "Quiz", icon: Brain },
+    { id: "progress", label: "Progress", icon: BarChart3 },
+  ];
+  
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Sidebar */}
-      <Sidebar
-        navigation={navigation}
-        activeView={activeView}
-        onNavigate={setActiveView}
+    <Routes>
+
+      {/* ✅ NEW ROUTE FOR NOTION OAUTH SUCCESS */}
+      <Route path="/notion/success" element={<NotionSuccess />} />
+
+      {/* ✅ Your original app UI preserved EXACTLY */}
+      <Route
+        path="/"
+        element={
+          <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
+
+            <Sidebar
+              navigation={navigation}
+              activeView={activeView}
+              onNavigate={setActiveView}
+            />
+
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+                {activeView === 'dashboard' && <Dashboard onNavigate={setActiveView} />}
+                {activeView === 'library' && <DocumentLibrary />}
+                {activeView === 'chat' && <ChatInterface />}
+                {activeView === 'quiz' && <QuizModule />}
+                {activeView === 'progress' && <ProgressTracker />}
+              </main>
+
+              <MobileNav
+                navigation={navigation}
+                activeView={activeView}
+                onNavigate={setActiveView}
+              />
+            </div>
+
+          </div>
+        }
       />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
-          {activeView === 'dashboard' && <Dashboard onNavigate={setActiveView} />}
-          {activeView === 'library' && <DocumentLibrary />}
-          {activeView === 'chat' && <ChatInterface />}
-          {activeView === 'quiz' && <QuizModule />}
-          {activeView === 'progress' && <ProgressTracker />}
-        </main>
-
-        {/* Mobile Bottom Navigation */}
-        <MobileNav
-          navigation={navigation}
-          activeView={activeView}
-          onNavigate={setActiveView}
-        />
-      </div>
-    </div>
+    </Routes>
   );
 }
