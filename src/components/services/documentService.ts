@@ -12,7 +12,7 @@ export interface DocumentRecord {
   user_id: string;
 }
 
-const API_BASE = "http://localhost:8000/api/v1/uploads";
+const API_BASE = "http://localhost:3001/api/v1/uploads";
 
 export const documentService = {
     

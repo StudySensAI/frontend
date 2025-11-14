@@ -11,15 +11,20 @@ import { Home, BookOpen, MessageSquare, Brain, BarChart3 } from 'lucide-react';
 import { AuthContextProvider, UserAuth } from './context/authContext';
 import { supabase } from './supabaseClient';
 import { set } from 'react-hook-form';
+import LiquidEther from './components/LiquidEther';
+import { ThemeProvider } from './context/themeContext';
 export default function App() {
  return (
+  <ThemeProvider>
     <AuthContextProvider>
       <AppContent />
     </AuthContextProvider>
+    </ThemeProvider>
   );
 }
 
 function AppContent() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { session,loading, setSession } = UserAuth(); // ✅ Supabase session from context
   const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>('dashboard');
   const [isLoading, setIsLoading] = useState(true);
@@ -70,7 +75,7 @@ function AppContent() {
 ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
       {/* Sidebar */}
       <Sidebar
         navigation={navigation}

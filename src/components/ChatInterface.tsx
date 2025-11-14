@@ -14,6 +14,7 @@ interface DocumentType {
   uploaded_at: string;
   user_id: string;
 }
+import { useTheme } from '../context/themeContext';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState([
@@ -41,7 +42,7 @@ export function ChatInterface() {
       const userId = userData?.user?.id;
 
       const res = await fetch(
-        `http://localhost:8000/api/v1/dashboard/documents?user_id=${userId}`
+        `http://localhost:3001/api/v1/dashboard/documents?user_id=${userId}`
       );
       const data = await res.json();
 
@@ -126,33 +127,41 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      {/* ------------------------------------------------ HEADER ------------------------------------------------ */}
-      <div className="p-4 md:p-6 border-b border-gray-200 bg-white shadow-sm">
+    <div
+      className="h-full flex flex-col min-h-screen 
+                 bg-linear-to-br from-blue-200 via-white to-purple-200 
+                 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950
+                 backdrop-blur-2xl"
+    >
+      {/* Header */}
+      <div
+        className="p-4 md:p-6 border-b border-white/50 dark:border-gray-700/50
+                   bg-white/40 dark:bg-gray-800/30 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]"
+      >
         <div className="max-w-4xl mx-auto space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl">AI Study Chat</h1>
-              <p className="text-sm text-gray-600">Ask questions about your study materials</p>
+              <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">AI Study Chat</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Ask questions about your study materials
+              </p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg">
               <Bot className="w-7 h-7 text-white" />
             </div>
           </div>
 
           {/* ----------------- DOCUMENT SELECTOR ------------------- */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            <BookOpen className="w-4 h-4 text-gray-400 shrink-0" />
-
-            {/* Show top 3 most recent docs */}
+            <BookOpen className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
             <div className="flex gap-2">
               {allDocs.slice(0, 3).map((doc) => (
                 <Badge
                   key={doc.id}
                   variant={selectedDocs.includes(doc.id) ? 'default' : 'outline'}
-                  className={`cursor-pointer transition-all px-3 py-1 ${selectedDocs.includes(doc.id)
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                      : 'hover:bg-gray-100'
+                  className={`cursor-pointer whitespace-nowrap backdrop-blur-md transition-all${selectedDocs.includes(doc.id)
+                      ? 'bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-md'
+                      : 'bg-white/40 dark:bg-gray-800/40 border-white/60 dark:border-gray-700/50 hover:bg-white/60 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
                     }`}
                   onClick={() => toggleDocSelection(doc.id)}
                 >
@@ -198,7 +207,7 @@ export function ChatInterface() {
                 }`}
             >
               {message.role === 'assistant' && (
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shrink-0 shadow-md">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
               )}
@@ -208,18 +217,49 @@ export function ChatInterface() {
                   }`}
               >
                 <Card
-                  className={`p-4 ${message.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white'
-                    }`}
+                  className={`p-4 rounded-2xl backdrop-blur-xl transition-all shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] ${
+                    message.role === 'user'
+                      ? 'bg-linear-to-br from-blue-500/90 to-indigo-500/90 text-white shadow-[0_6px_25px_rgba(59,130,246,0.3)]'
+                      : 'bg-white/50 dark:bg-gray-800/50 border border-white/60 dark:border-gray-700/50 text-gray-800 dark:text-gray-200'
+                  }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                   <div className="space-y-2">
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                      {message.content}
+                    </p>
+                    {message.role === 'assistant' && (
+                      <div className="flex items-center gap-2 pt-2 border-t border-white/60 dark:border-gray-700/50">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/40 dark:hover:bg-gray-700/50"
+                        >
+                          <Copy className="w-3 h-3" />
+                          <span className="text-xs">Copy</span>
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 hover:bg-white/40 dark:hover:bg-gray-700/50"
+                        >
+                          <ThumbsUp className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-white/40 dark:hover:bg-gray-700/50"
+                        >
+                          <ThumbsDown className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </Card>
               </div>
 
               {message.role === 'user' && (
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center shrink-0">
-                  <User className="w-5 h-5 text-gray-600" />
+                <div className="w-8 h-8 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                  <User className="w-5 h-5 text-gray-700" />
                 </div>
               )}
             </div>
@@ -228,13 +268,16 @@ export function ChatInterface() {
         </div>
       </div>
 
-      {/* ------------------------------------------------ INPUT AREA ------------------------------------------------ */}
-      <div className="p-4 md:p-6 border-t border-gray-200 bg-white">
+      {/* Input Area */}
+      <div
+        className="p-4 md:p-6 border-t border-white/50 dark:border-gray-700/50 bg-white/40 dark:bg-gray-800/30 backdrop-blur-xl 
+                   shadow-[0_-4px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_30px_rgba(0,0,0,0.3)]"
+      >
         <div className="max-w-4xl mx-auto space-y-3">
           {messages.length === 1 && (
             <div className="space-y-2">
-              <p className="text-xs text-gray-600 flex items-center gap-2">
-                <Sparkles className="w-3 h-3" />
+              <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                <Sparkles className="w-3 h-3 text-indigo-500" />
                 Suggested questions:
               </p>
 
@@ -243,7 +286,7 @@ export function ChatInterface() {
                   <Badge
                     key={question}
                     variant="outline"
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="cursor-pointer bg-white/50 dark:bg-gray-800/50 border-white/60 dark:border-gray-700/50 hover:bg-white/70 dark:hover:bg-gray-700/50 backdrop-blur-md text-gray-700 dark:text-gray-300"
                     onClick={() => setInput(question)}
                   >
                     {question}
@@ -259,13 +302,13 @@ export function ChatInterface() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              className="min-h-[60px] max-h-32 resize-none"
+              className="min-h-[60px] max-h-32 resize-none bg-white/60 dark:bg-gray-800/60 border-white/60 dark:border-gray-700/50 backdrop-blur-md text-gray-800 dark:text-gray-200 placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-blue-400/40"
             />
 
             <Button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shrink-0"
+              className="bg-linear-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all shrink-0"
             >
               <Send className="w-5 h-5" />
             </Button>
