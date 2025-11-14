@@ -81,6 +81,7 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
                  dark:from-gray-950 dark:via-gray-900 dark:to-gray-950
                  bg-fixed">
       {/* Header */}
+       <div className="max-w-7xl mx-auto space-y-8">
       <div className="p-6 rounded-3xl bg-white/40 dark:bg-gray-800/30 backdrop-blur-2xl border border-white/60 dark:border-gray-700/30 shadow-[0_4px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_40px_rgba(0,0,0,0.3)]">
         <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">Welcome back! 👋</h1>
         
@@ -110,7 +111,7 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
       </div>
 
       {/* Quick Actions */}
-      <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/35 dark:bg-gray-800/20 backdrop-blur-2xl shadow-xl dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
+      {/* <Card className="p-6 rounded-3xl border border-white/60 dark:border-gray-700/30 bg-white/35 dark:bg-gray-800/20 backdrop-blur-2xl shadow-xl dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
         <h2 className="text-lg mb-4 text-gray-800 dark:text-white font-medium">Quick Actions</h2>
         <div className="grid sm:grid-cols-3 gap-3">
           <Button
@@ -141,7 +142,7 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
             <span className="text-sm">Take Quiz</span>
           </Button>
         </div>
-        </Card>
+        </Card> */}
 
         {/* Stats Grid */}
         
@@ -279,6 +280,7 @@ const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
             </Button>
           </div>
         </Card>
+      </div>
       </div>
     
   );
