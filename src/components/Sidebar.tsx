@@ -1,4 +1,4 @@
-import { GraduationCap, LogOut, Moon, Sun } from 'lucide-react';
+import { Brain, LogOut, Moon, Sun } from 'lucide-react';
 import { Button } from './ui/button';
 import { UserAuth } from '../context/authContext';
 import { useTheme } from '../context/themeContext';
@@ -46,7 +46,7 @@ export function Sidebar({ navigation, activeView, onNavigate, isDimmed }: Sideba
         {/* Logo Section */}
         <div className="flex items-center gap-3 px-6 mb-10">
           <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-[0_4px_20px_rgba(59,130,246,0.4)]">
-            <GraduationCap className="w-6 h-6 text-white" />
+           <Brain className="w-8 h-8 text-white" />
           </div>
           <span className="text-xl font-semibold text-gray-800 dark:text-white drop-shadow-sm">StudySensAI</span>
         </div>
