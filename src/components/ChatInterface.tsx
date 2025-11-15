@@ -328,7 +328,7 @@ useEffect(() => {
                   variant={selectedDoc?.includes(doc.id) ? 'default' : 'outline'}
                   className={`cursor-pointer whitespace-nowrap backdrop-blur-md transition-all${selectedDoc?.includes(doc.id)
                       ? 'bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-md'
-                      : 'bg-white/40 dark:bg-gray-800/40 border-white/60 dark:border-gray-700/50 hover:bg-white/60 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
+                      : 'bg-white/40 dark:bg-gray-800/40 border-white/60 dark:border-gray-700/50 hover:bg-white/60 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300 dark:bg-blue-400'
                     }`}
                   onClick={() => handleClickPdf(doc.id)}
                 >
