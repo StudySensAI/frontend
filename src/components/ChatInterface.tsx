@@ -8,6 +8,10 @@ import { useUser } from '../context/userContext';
 import NotionSuccess from '../notion/success';
 import { supabase } from '../supabaseClient';
 import { useTheme } from '../context/themeContext';
+interface ChatInterfaceProps {
+  showDocPanel: boolean;
+  setShowDocPanel: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 export function ChatInterface() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -338,7 +342,7 @@ useEffect(() => {
             {/* PLUS BUTTON */}
             <button
               onClick={() => setShowDocPanel(true)}
-              className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 shrink-0"
+              className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 shrink-0"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -510,18 +514,23 @@ useEffect(() => {
 
       {/* ------------------------------------------------ SIDE PANEL ------------------------------------------------ */}
       {showDocPanel && (
-        <div className="fixed inset-0 bg-black/40 flex justify-end z-50">
-          <div className="bg-white w-96 p-4 h-full shadow-xl overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Select Study Materials</h2>
-              <button
-                className="text-gray-500 hover:text-gray-700"
-                onClick={() => setShowDocPanel(false)}
-              >
-                ✖
-              </button>
-            </div>
+  <div className="fixed inset-0 bg-black/40 flex justify-end z-50 dark:bg-black/60">
+    <div className="bg-white dark:bg-gray-900 w-96 p-4 h-full shadow-xl overflow-y-auto border-l border-gray-200/40 dark:border-white/10 transition-colors duration-300">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          Select Study Materials
+        </h2>
+        <button
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          onClick={() => setShowDocPanel(false)}
+        >
+          ✖
+        </button>
+      </div>
 
+      {/* Docs List */}
+    
             <div className="space-y-3">
               {allDocs.map((doc) => (
                 <div
@@ -551,15 +560,18 @@ useEffect(() => {
               ))}
             </div>
 
-            <button
-              className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-              onClick={() => setShowDocPanel(false)}
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Done Button */}
+      <button
+        className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 
+                   dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200"
+        onClick={() => setShowDocPanel(false)}
+      >
+        Done
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

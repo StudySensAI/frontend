@@ -10,8 +10,6 @@ import { AuthScreen } from './components/AuthScreen';
 import { Home, BookOpen, MessageSquare, Brain, BarChart3 } from 'lucide-react';
 import { AuthContextProvider, UserAuth } from './context/authContext';
 import { supabase } from './supabaseClient';
-import { set } from 'react-hook-form';
-import LiquidEther from './components/LiquidEther';
 import { ThemeProvider } from './context/themeContext';
 import { Routes, Route } from 'react-router-dom';
 import NotionSuccess from "./notion/success";
@@ -19,19 +17,21 @@ import NotionSuccess from "./notion/success";
 export default function App() {
   return (
     <ThemeProvider>
-
-    <AuthContextProvider>
-      <AppContent />
-    </AuthContextProvider>
+      <AuthContextProvider>
+        <AppContent />
+      </AuthContextProvider>
     </ThemeProvider>
   );
 }
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { session,loading, setSession } = UserAuth(); // ✅ Supabase session from context
+  const { session, loading, setSession } = UserAuth();
   const [activeView, setActiveView] = useState<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>('dashboard');
   const [isLoading, setIsLoading] = useState(true);
+
+  // ✅ Moved here (inside component)
+  const [showDocPanel, setShowDocPanel] = useState(false);
 
   useEffect(() => {
     const initSession = async () => {
@@ -64,41 +64,44 @@ function AppContent() {
   }
 
   const navigation: {
-    id: "dashboard" | "library" | "chat" | "quiz" | "progress";
+    id: 'dashboard' | 'library' | 'chat' | 'quiz' | 'progress';
     label: string;
     icon: any;
   }[] = [
-    { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "library", label: "Library", icon: BookOpen },
-    { id: "chat", label: "AI Chat", icon: MessageSquare },
-    { id: "quiz", label: "Quiz", icon: Brain },
-    { id: "progress", label: "Progress", icon: BarChart3 },
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'library', label: 'Library', icon: BookOpen },
+    { id: 'chat', label: 'AI Chat', icon: MessageSquare },
+    { id: 'quiz', label: 'Quiz', icon: Brain },
+    { id: 'progress', label: 'Progress', icon: BarChart3 },
   ];
-  
 
   return (
     <Routes>
-
       {/* ✅ NEW ROUTE FOR NOTION OAUTH SUCCESS */}
       <Route path="/notion/success" element={<NotionSuccess />} />
 
-      {/* ✅ Your original app UI preserved EXACTLY */}
+      {/* ✅ Your main layout */}
       <Route
         path="/"
         element={
           <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
-
             <Sidebar
               navigation={navigation}
               activeView={activeView}
               onNavigate={setActiveView}
+              isDimmed={showDocPanel} // 👈 Sidebar dims when panel open
             />
 
             <div className="flex-1 flex flex-col overflow-hidden">
               <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
                 {activeView === 'dashboard' && <Dashboard onNavigate={setActiveView} />}
                 {activeView === 'library' && <DocumentLibrary />}
-                {activeView === 'chat' && <ChatInterface />}
+                {activeView === 'chat' && (
+                  <ChatInterface
+                    showDocPanel={showDocPanel}
+                    setShowDocPanel={setShowDocPanel}
+                  />
+                )}
                 {activeView === 'quiz' && <QuizModule />}
                 {activeView === 'progress' && <ProgressTracker />}
               </main>
@@ -109,11 +112,9 @@ function AppContent() {
                 onNavigate={setActiveView}
               />
             </div>
-
           </div>
         }
       />
-
     </Routes>
   );
 }

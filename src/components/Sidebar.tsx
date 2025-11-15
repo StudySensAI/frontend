@@ -14,10 +14,12 @@ interface SidebarProps {
   onNavigate: React.Dispatch<
     React.SetStateAction<'dashboard' | 'library' | 'chat' | 'quiz' | 'progress'>
   >; // ✅ <-- match useState type exactly
+  isDimmed?: boolean
 }
 
 
-export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
+export function Sidebar({ navigation, activeView, onNavigate, isDimmed }: SidebarProps) {
+
   const { signOut,setSession } = UserAuth();
   const { user } = useUser();
   const handleSignOut = async () => {
@@ -33,11 +35,12 @@ export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
   
   return (
     <div
-      className="hidden md:flex md:w-64 md:flex-col 
+      className={`hidden md:flex md:w-64 md:flex-col 
                  bg-linear-to-br from-blue-100/60 via-white/40 to-purple-100/60
                  dark:from-gray-900/80 dark:via-gray-950/60 dark:to-gray-950/80
                  backdrop-blur-3xl border-r border-white/70 dark:border-gray-700/50
-                 shadow-[0_12px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_60px_rgba(0,0,0,0.3)] relative"
+                 shadow-[0_12px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_60px_rgba(0,0,0,0.3)] relative
+                 ${isDimmed ? 'opacity-50 blur-[1px] scale-[0.995]' : 'opacity-100 blur-0 scale-100'}`}
     >
       <div className="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto">
         {/* Logo Section */}
