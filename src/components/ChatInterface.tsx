@@ -10,6 +10,7 @@ import { supabase } from '../supabaseClient';
 import { useTheme } from '../context/themeContext';
 
 export function ChatInterface() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useUser();
   const id = localStorage.getItem("userId")
   interface NotionPage {
@@ -48,6 +49,7 @@ const handleClickPage = async (pageId: string): Promise<void> => {
     return;
   }
   setSelectedNotionPage(pageId)
+  setSelectedDoc(null)
   try {
     const res = await fetch(`${API_URL}/notion/store`, {
       method: "POST",
@@ -67,7 +69,7 @@ const handleClickPage = async (pageId: string): Promise<void> => {
   }
 };
 const [allDocs, setAllDocs] = useState<DocumentType[]>([]);
-const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
+const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
 
 const [showDocPanel, setShowDocPanel] = useState(false);
 async function loadNotionPages() {
@@ -161,71 +163,109 @@ useEffect(() => {
     'Compare TCP vs UDP',
     'Summarize this chapter',
   ];
+  async function handleClickPdf(docId:string) {
+    setSelectedDoc(docId)
+    setSelectedNotionPage(null)
+    
+  
+    await fetch(`${API_URL}/api/v1/rag/store-chunks`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ docId, userId:id })
+    });
+  
+    alert("PDF processed & ready for chat!");
+  }
+  
 
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Toggle selection
-  const toggleDocSelection = (docId: string) => {
-    setSelectedDocs(prev => {
-      const updated = prev.includes(docId)
-        ? prev.filter(id => id !== docId)
-        : [...prev, docId];
-
-      console.log("UPDATED:", updated); // now logs the correct updated array
-      return updated;
-    });
-  };
-  const API_URL = import.meta.env.VITE_API_URL;
+  
 
 
   // ---------------- SEND MESSAGE ----------------
   const handleSend = async () => {
     if (!input.trim()) return;
-    if (!selectedNotionPage)
-      return alert("Please select a Notion page first.");
-    console.log('selected page', selectedNotionPage)
-
+  
+    if (!selectedNotionPage && !selectedDoc) {
+      return alert("Please select a Notion page or a PDF first.");
+    }
+  
     const userMessage = {
       id: messages.length + 1,
       role: "user" as const,
       content: input,
       timestamp: new Date(),
-      pdf_ids: selectedDocs,
     };
-
+  
     setMessages((prev) => [...prev, userMessage]);
-
+  
     const question = input;
     setInput("");
-
+  
     try {
-      const res = await fetch(`${API_URL}/chat/query`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: id,
-          pageId: selectedNotionPage,
-          question,
-        }),
-      });
-
-      const data = await res.json();
-
+      let answer = "";
+  
+      // -------------------------------------------------------
+      // 🔵 1) If PDF is selected → use PDF chat route
+      // -------------------------------------------------------
+      if (selectedDoc) {
+        console.log("Using PDF route for document:", selectedDoc);
+  
+        const res = await fetch(`${API_URL}/chat/pdf-query`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            docId: selectedDoc,    // only one PDF
+            question,
+          }),
+        });
+  
+        const data = await res.json();
+        answer = data.answer || "No response.";
+      }
+  
+      // -------------------------------------------------------
+      // 🟣 2) Else if Notion page is selected → use Notion chat
+      // -------------------------------------------------------
+      else if (selectedNotionPage) {
+        console.log("Using Notion route for page:", selectedNotionPage);
+  
+        const res = await fetch(`${API_URL}/chat/query`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: id,
+            pageId: selectedNotionPage,
+            question,
+          }),
+        });
+  
+        const data = await res.json();
+        answer = data.answer || "No response.";
+      }
+  
+      // -------------------------------------------------------
+      // 🟢 3) Push answer to chat
+      // -------------------------------------------------------
       const aiMessage = {
         id: messages.length + 2,
         role: "assistant" as const,
-        content: data.answer || "No response.",
+        content: answer,
         timestamp: new Date(),
       };
-
+  
       setMessages((prev) => [...prev, aiMessage]);
     } catch (err) {
       console.error("Chat request failed:", err);
     }
   };
+  
 
   /* --------------------------------------------
    * Handle Enter Key
@@ -281,12 +321,12 @@ useEffect(() => {
               {allDocs.slice(0, 3).map((doc) => (
                 <Badge
                   key={doc.id}
-                  variant={selectedDocs.includes(doc.id) ? 'default' : 'outline'}
-                  className={`cursor-pointer whitespace-nowrap backdrop-blur-md transition-all${selectedDocs.includes(doc.id)
+                  variant={selectedDoc?.includes(doc.id) ? 'default' : 'outline'}
+                  className={`cursor-pointer whitespace-nowrap backdrop-blur-md transition-all${selectedDoc?.includes(doc.id)
                       ? 'bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-md'
                       : 'bg-white/40 dark:bg-gray-800/40 border-white/60 dark:border-gray-700/50 hover:bg-white/60 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
                     }`}
-                  onClick={() => toggleDocSelection(doc.id)}
+                  onClick={() => handleClickPdf(doc.id)}
                 >
                   <span className="block max-w-[250px] truncate">
                     {doc.title}
@@ -305,18 +345,14 @@ useEffect(() => {
           </div>
 
           {/* Selected Docs Row */}
-          {selectedDocs.length > 0 && (
-            <div className="flex gap-2 flex-wrap">
-              {selectedDocs.map((id) => {
-                const doc = allDocs.find((d) => d.id === id);
-                return (
-                  <Badge key={id} className="bg-blue-100 text-blue-700">
-                    {doc?.title}
-                  </Badge>
-                );
-              })}
-            </div>
-          )}
+          {selectedDoc && (
+  <div className="flex gap-2 flex-wrap">
+    <Badge className="bg-blue-100 text-blue-700">
+      {allDocs.find((d) => d.id === selectedDoc)?.title}
+    </Badge>
+  </div>
+)}
+
           {/* --- Notion Pages Selector --- */}
       {notionConnected && notionPages.length > 0 && (
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
@@ -491,11 +527,11 @@ useEffect(() => {
                 <div
                   key={doc.id}
                   className="flex items-center gap-3 p-2 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                  onClick={() => toggleDocSelection(doc.id)}
+                  onClick={() => handleClickPdf(doc.id)}
                 >
                   <input
                     type="checkbox"
-                    checked={selectedDocs.includes(doc.id)}
+                    checked={selectedDoc?.includes(doc.id)}
                     readOnly
                     className="mt-1"
                   />
