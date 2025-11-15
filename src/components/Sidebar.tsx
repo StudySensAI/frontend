@@ -45,7 +45,7 @@ export function Sidebar({ navigation, activeView, onNavigate }: SidebarProps) {
           <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-[0_4px_20px_rgba(59,130,246,0.4)]">
             <GraduationCap className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-semibold text-gray-800 dark:text-white drop-shadow-sm">StudyMate AI</span>
+          <span className="text-xl font-semibold text-gray-800 dark:text-white drop-shadow-sm">StudySensAI</span>
         </div>
 
         {/* Navigation Links */}
