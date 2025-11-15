@@ -8,8 +8,13 @@ import { useUser } from '../context/userContext';
 import NotionSuccess from '../notion/success';
 import { supabase } from '../supabaseClient';
 import { useTheme } from '../context/themeContext';
+interface ChatInterfaceProps {
+  showDocPanel: boolean;
+  setShowDocPanel: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export function ChatInterface() {
+
+export function ChatInterface({ showDocPanel, setShowDocPanel }: ChatInterfaceProps) {
   const { user } = useUser();
   const id = localStorage.getItem("userId")
   interface NotionPage {
@@ -68,8 +73,6 @@ const handleClickPage = async (pageId: string): Promise<void> => {
 };
 const [allDocs, setAllDocs] = useState<DocumentType[]>([]);
 const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
-
-const [showDocPanel, setShowDocPanel] = useState(false);
 async function loadNotionPages() {
   if (!id) return;
 
@@ -298,7 +301,7 @@ useEffect(() => {
             {/* PLUS BUTTON */}
             <button
               onClick={() => setShowDocPanel(true)}
-              className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 shrink-0"
+              className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 shrink-0"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -474,56 +477,62 @@ useEffect(() => {
 
       {/* ------------------------------------------------ SIDE PANEL ------------------------------------------------ */}
       {showDocPanel && (
-        <div className="fixed inset-0 bg-black/40 flex justify-end z-50">
-          <div className="bg-white w-96 p-4 h-full shadow-xl overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Select Study Materials</h2>
-              <button
-                className="text-gray-500 hover:text-gray-700"
-                onClick={() => setShowDocPanel(false)}
-              >
-                ✖
-              </button>
+  <div className="fixed inset-0 bg-black/40 flex justify-end z-50 dark:bg-black/60">
+    <div className="bg-white dark:bg-gray-900 w-96 p-4 h-full shadow-xl overflow-y-auto border-l border-gray-200/40 dark:border-white/10 transition-colors duration-300">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          Select Study Materials
+        </h2>
+        <button
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          onClick={() => setShowDocPanel(false)}
+        >
+          ✖
+        </button>
+      </div>
+
+      {/* Docs List */}
+      <div className="space-y-3">
+        {allDocs.map((doc) => (
+          <div
+            key={doc.id}
+            className="flex items-center gap-3 p-2 border rounded-lg cursor-pointer transition-all duration-200
+              border-gray-200 dark:border-white/10
+              hover:bg-gray-50 dark:hover:bg-white/5"
+            onClick={() => toggleDocSelection(doc.id)}
+          >
+            <input
+              type="checkbox"
+              checked={selectedDocs.includes(doc.id)}
+              readOnly
+              className="mt-1 accent-blue-600 dark:accent-blue-500"
+            />
+
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm truncate text-gray-800 dark:text-gray-100">
+                {doc.title}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {doc.pages ?? 0} pages · {formatTimeAgo(doc.uploaded_at)}
+              </p>
             </div>
-
-            <div className="space-y-3">
-              {allDocs.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex items-center gap-3 p-2 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                  onClick={() => toggleDocSelection(doc.id)}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedDocs.includes(doc.id)}
-                    readOnly
-                    className="mt-1"
-                  />
-
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className="font-medium text-sm truncate overflow-hidden text-ellipsis w-full block"
-                    >
-                      {doc.title}
-                    </p>
-                    <p className="text-xs text-gray-500">{doc.pages ?? 0} pages · {formatTimeAgo(doc.uploaded_at)}</p>
-                    {/* <p className="text-[10px] text-gray-400">
-                      {formatTimeAgo(doc.uploaded_at)}
-                    </p> */}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-              onClick={() => setShowDocPanel(false)}
-            >
-              Done
-            </button>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
+
+      {/* Done Button */}
+      <button
+        className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 
+                   dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200"
+        onClick={() => setShowDocPanel(false)}
+      >
+        Done
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

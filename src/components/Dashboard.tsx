@@ -170,15 +170,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               <p className="text-sm text-gray-500">No materials uploaded yet.</p>
             ) : (
           <div className="space-y-3">
-            aefsaef
             {recentDocuments.map((doc) => (
-              <div key={doc.id} onClick={() => {window.open(doc.file_url, "_blank")}} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
-                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-red-200 transition-colors">
+              <div key={doc.id} onClick={() => {window.open(doc.file_url, "_blank")}} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer group">
+                <div className="w-10 bg-red-100 dark:bg-red-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-red-200 dark:group-hover:bg-red-800/60 transition-colors">
                   <BookOpen className="w-5 h-5 text-red-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm truncate">{doc.title}</p>
-                  <p className="text-xs text-gray-600"> {doc.pages || 0} pages · {formatTimeAgo(doc.uploaded_at)}</p>
+                  <p className="text-sm truncate text-gray-900 dark:text-gray-100">{doc.title}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400"> {doc.pages || 0} pages · {formatTimeAgo(doc.uploaded_at)}</p>
                 </div>
               </div>
             ))}
