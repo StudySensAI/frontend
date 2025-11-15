@@ -36,8 +36,16 @@ export function ProgressTracker() {
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="p-6 rounded-3xl bg-white/40 dark:bg-gray-800/30 border border-white/60 dark:border-gray-700/50 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
-          <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">Progress Tracker</h1>
-          <p className="text-gray-600 dark:text-gray-400">Monitor your learning journey and achievements</p>
+          <div className="flex items-center justify-between">
+  <div className="flex items-center gap-2">
+    <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">Progress Tracker</h1>
+    <Badge className="bg-blue-500/90 text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
+      Beta
+    </Badge>
+  </div>
+</div>
+<p className="text-gray-600 dark:text-gray-400">Monitor your learning journey and achievements</p>
+
         </div>
 
         {/* Overview Stats */}

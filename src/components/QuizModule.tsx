@@ -96,8 +96,16 @@ export function QuizModule() {
       <div className="min-h-screen p-6 md:p-10 bg-linear-to-br from-blue-200 via-white to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 bg-fixed">
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="p-6 rounded-3xl bg-white/40 dark:bg-gray-800/30 backdrop-blur-2xl border border-white/60 dark:border-gray-700/50 shadow-[0_8px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
-            <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">Practice Quizzes</h1>
-            <p className="text-gray-600 dark:text-gray-400">Test your knowledge with AI-generated quizzes</p>
+            <div className="flex items-center justify-between">
+  <div className="flex items-center gap-2">
+    <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">Practice Quizzes</h1>
+    <Badge className="bg-blue-500/90 text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
+      Beta
+    </Badge>
+  </div>
+</div>
+<p className="text-gray-600 dark:text-gray-400">Test your knowledge with AI-generated quizzes</p>
+
           </div>
 
           {/* Custom Quiz Card */}

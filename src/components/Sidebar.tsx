@@ -72,7 +72,14 @@ export function Sidebar({ navigation, activeView, onNavigate, isDimmed }: Sideba
                     isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-700'
                   }`}
                 />
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="flex items-center gap-2 text-sm font-medium">
+        {item.label}
+        {(item.id === 'quiz' || item.id === 'progress') && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/90 text-white shadow-sm">
+            Beta
+          </span>
+        )}
+      </span>
               </button>
             );
           })}
