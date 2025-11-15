@@ -205,7 +205,7 @@ const { signInUser } = UserAuth();
                   <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                     <Brain className="w-8 h-8 text-white" />
                   </div>
-                  <span className="text-3xl tracking-tight">StudyMate AI</span>
+                  <span className="text-3xl tracking-tight">StudySensAI</span>
                 </div>
   
                 <h1 className="text-5xl font-bold bg-clip-text text-transparent
